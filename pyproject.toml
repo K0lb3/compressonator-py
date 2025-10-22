@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=70, <=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "compressonator-py"
+description = "compressonator bindings"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [{ name = "Rudolf Kolbe", email = "rkolbe96@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dynamic = ["version"]
+
+[project.urls]
+"Homepage" = "https://github.com/K0lb3/compresstonator-py"
+"Bug Tracker" = "https://github.com/K0lb3/compresstonator-py/issues"
+
+[tool.setuptools.dynamic]
+version = { attr = "compressonator_py.__version__" }

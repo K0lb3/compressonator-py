@@ -1,0 +1,7 @@
+recursive-include compressonator_pyc *
+recursive-include compressonator/build/sdk *
+recursive-include compressonator/cmp_core *
+recursive-include compressonator/cmp_compressonatorlib *
+recursive-include compressonator/applications/_libs/cmp_math *
+recursive-include compressonator/applications/_plugins/common *
+recursive-include compressonator/cmp_framework/common *
