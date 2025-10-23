@@ -132,14 +132,14 @@ class CustomBuildExt(build_ext):
             sse_arg = ""
             avx_arg = "/arch:AVX2"
             avx512_arg = "/arch:AVX512"
-            extra_arg = "/std:c++14"
+            extra_args = ["/std:c++14"]
         else:
             sse_arg = "-march=nehalem"  # unix
             avx_arg = "-march=haswell"
             avx512_arg = "-march=knl"
-            extra_arg = "-std=c++14"
+            extra_args = ["-std=c++14", "-fpermissive"]
 
-        ext.extra_compile_args.append(extra_arg)
+        ext.extra_compile_args.extend(extra_args)
         macros = ext.define_macros[:]
         for undef in ext.undef_macros:
             macros.append((undef,))
