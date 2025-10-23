@@ -160,8 +160,8 @@ class CustomBuildExt(build_ext):
 
 
 setup(
-    name="CompressonatorPy",
-    packages=["compressonator"],
+    name="compressonator-py",
+    packages=["compressonator_py"],
     package_data={"compressonator_py": ["*.py", "*.pyi", "py.typed"]},
     ext_modules=[
         Extension(
