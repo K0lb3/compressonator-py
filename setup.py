@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import glob
 import os
 from itertools import chain
 
@@ -11,6 +10,14 @@ LOCAL = ""
 CMP_DIR = os.path.join(LOCAL, "compressonator")
 CMP_CORE_DIR = os.path.join(CMP_DIR, "cmp_core")
 CMP_COMPRESSONATORLIB_DIR = os.path.join(CMP_DIR, "cmp_compressonatorlib")
+
+
+def glob(pattern: str) -> list[str]:
+    # glob.glob only added root dir in 3.10
+    dir, ext = os.path.split(pattern)
+    assert ext.startswith("*"), "Only simple globbing supported"
+    ext = ext[1:]
+    return [os.path.join(dir, f) for f in os.listdir(dir) if f.endswith(ext)]
 
 
 class BuildPart:
@@ -49,7 +56,7 @@ class CompressonatorLib(BuildPart):
         f"{CMP_COMPRESSONATORLIB_DIR}/compress.cpp",
         f"{CMP_COMPRESSONATORLIB_DIR}/compressonator.cpp",
         *chain.from_iterable(
-            glob.glob(f"{CMP_COMPRESSONATORLIB_DIR}/{entry}", root_dir=LOCAL)
+            glob(f"{CMP_COMPRESSONATORLIB_DIR}/{entry}")
             for entry in [
                 # Lossy Compression
                 "apc/*.cpp",
@@ -73,9 +80,9 @@ class CompressonatorLib(BuildPart):
                 "astc/arm/*.cpp",
             ]
         ),
-        *glob.glob(f"{CMP_COMPRESSONATORLIB_DIR}/common/*.cpp", root_dir=LOCAL),
-        *glob.glob(f"{CMP_DIR}/cmp_framework/common/*.cpp", root_dir=LOCAL),
-        *glob.glob(f"{CMP_DIR}/cmp_framework/common/half/*.cpp", root_dir=LOCAL),
+        *glob(f"{CMP_COMPRESSONATORLIB_DIR}/common/*.cpp"),
+        *glob(f"{CMP_DIR}/cmp_framework/common/*.cpp"),
+        *glob(f"{CMP_DIR}/cmp_framework/common/half/*.cpp"),
         f"{CMP_DIR}/applications/_plugins/common/atiformats.cpp",
         f"{CMP_DIR}/applications/_plugins/common/format_conversion.cpp",
         f"{CMP_DIR}/applications/_plugins/common/codec_common.cpp",
@@ -127,7 +134,7 @@ class CustomBuildExt(build_ext):
             avx512_arg = "/arch:AVX512"
             extra_arg = "/std:c++14"
         else:
-            sse_arg = "--march=nehalem"  # unix
+            sse_arg = "-march=nehalem"  # unix
             avx_arg = "-march=haswell"
             avx512_arg = "-march=knl"
             extra_arg = "-std=c++14"
