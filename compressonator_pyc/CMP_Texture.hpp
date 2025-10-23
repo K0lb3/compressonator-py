@@ -45,7 +45,7 @@ static int CMP_TexturePy_init(CMP_TexturePy *self, PyObject *args, PyObject *kwa
     }
 
     texture.dwDataSize = CMP_CalculateBufferSize(&texture);
-    if (pyData != nullptr && !Py_IsNone(pyData))
+    if (pyData != nullptr && pyData != Py_None)
     {
         if (!PyObject_CheckBuffer(pyData))
         {

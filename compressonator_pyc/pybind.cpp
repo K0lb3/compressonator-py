@@ -30,7 +30,7 @@ static PyObject *CMP_ConvertTexturePy(PyObject *self, PyObject *args, PyObject *
     {
         return nullptr;
     }
-    if (!(options_py == nullptr || Py_IsNone((PyObject *)options_py) || PyObject_IsInstance((PyObject *)options_py, (PyObject *)CMP_CompressOptionsPy_ObjectType)))
+    if (!(options_py == nullptr || (PyObject *)options_py == Py_None || PyObject_IsInstance((PyObject *)options_py, (PyObject *)CMP_CompressOptionsPy_ObjectType)))
     {
         return PyErr_Format(PyExc_TypeError, "options has to be None or of type CMP_CompressOptions");
     }
@@ -40,7 +40,7 @@ static PyObject *CMP_ConvertTexturePy(PyObject *self, PyObject *args, PyObject *
     try
     {
         CMP_CompressOptions *options;
-        if (options_py == nullptr || Py_IsNone((PyObject *)options_py))
+        if (options_py == nullptr || (PyObject *)options_py == Py_None)
         {
             options = new CMP_CompressOptions();
             options->dwSize = sizeof(CMP_CompressOptions);
@@ -58,7 +58,7 @@ static PyObject *CMP_ConvertTexturePy(PyObject *self, PyObject *args, PyObject *
             options,
             nullptr);
 
-        if (options_py == nullptr || Py_IsNone((PyObject *)options_py))
+        if (options_py == nullptr || (PyObject *)options_py == Py_None)
         {
             delete options;
         }
