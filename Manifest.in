@@ -5,3 +5,8 @@ recursive-include compressonator/cmp_compressonatorlib *
 recursive-include compressonator/applications/_libs/cmp_math *
 recursive-include compressonator/applications/_plugins/common *
 recursive-include compressonator/cmp_framework/common *
+
+include compressonator/license/astc/license.txt
+include compressonator/license/etcpak/license.txt
+include compressonator/license/corelicense.txt
+include compressonator/license/license.txt
