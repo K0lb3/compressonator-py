@@ -1,5 +1,7 @@
 #include <Python.h>
 #include "structmember.h"
+#include "typeslots.h"
+
 #include "compressonator.h"
 #include "pyhelper.hpp"
 
@@ -55,11 +57,18 @@ static int CMP_TexturePy_init(CMP_TexturePy *self, PyObject *args, PyObject *kwa
         self->inputTextureDataView = new Py_buffer();
         if (PyObject_GetBuffer(pyData, self->inputTextureDataView, PyBUF_SIMPLE) == -1)
         {
+            /* Clean up the heap-allocated Py_buffer on failure */
+            delete self->inputTextureDataView;
+            self->inputTextureDataView = nullptr;
             return -1;
         }
         if (texture.dwDataSize != self->inputTextureDataView->len)
         {
             PyErr_SetString(PyExc_ValueError, "invalid data size");
+            /* release the acquired buffer and free the struct */
+            PyBuffer_Release(self->inputTextureDataView);
+            delete self->inputTextureDataView;
+            self->inputTextureDataView = nullptr;
             return -1;
         }
         texture.pData = (uint8_t *)self->inputTextureDataView->buf;
@@ -67,6 +76,11 @@ static int CMP_TexturePy_init(CMP_TexturePy *self, PyObject *args, PyObject *kwa
     else
     {
         texture.pData = (uint8_t *)malloc(texture.dwDataSize);
+        if (texture.pData == nullptr)
+        {
+            PyErr_NoMemory();
+            return -1;
+        }
     }
     return 0;
 }
@@ -75,7 +89,9 @@ static int CMP_TexturePy_dealloc(CMP_TexturePy *self)
 {
     if (self->inputTextureDataView != nullptr)
     {
+        /* Release the buffer and free the heap-allocated Py_buffer struct */
         PyBuffer_Release(self->inputTextureDataView);
+        delete self->inputTextureDataView;
         self->inputTextureDataView = nullptr;
         self->texture.pData = nullptr;
     }
@@ -84,7 +100,8 @@ static int CMP_TexturePy_dealloc(CMP_TexturePy *self)
         free(self->texture.pData);
         self->texture.pData = nullptr;
     }
-    PyObject_Del(self);
+    /* Use the type's tp_free to match allocation from PyType_GenericNew */
+    Py_TYPE(self)->tp_free((PyObject *)self);
     return 0;
 }
 
@@ -325,8 +342,15 @@ CMP_TexturePy_releasebuffer(PyObject *exporter, Py_buffer *view)
 {
     if (view->shape != NULL)
     {
-        delete view->shape;
+        /* shape was allocated with new[] in getbuffer */
+        delete[] view->shape;
         view->shape = NULL;
+    }
+    /* DECREF the exported object which was INCREF'd in getbuffer */
+    if (view->obj)
+    {
+        Py_DECREF(view->obj);
+        view->obj = NULL;
     }
 }
 
@@ -338,8 +362,11 @@ PyType_Slot CMP_TexturePy_slots[] = {
     //{Py_tp_repr, (void *)CMP_TexturePy_repr},
     {Py_tp_getset, CMP_TexturePy_getsetters},
     {Py_tp_members, CMP_TexturePy_members},
+// impl since 3.9 (removed from 3.8), limited api since 3.11
+#if (!defined(PY_LIMITED_API) && PY_VERSION_HEX >= 0x030A0000) || (defined(PY_LIMITED_API) && PY_LIMITED_API + 0 >= 0x030B0000)
     {Py_bf_getbuffer, (getbufferproc)CMP_TexturePy_getbuffer},
     {Py_bf_releasebuffer, (releasebufferproc)CMP_TexturePy_releasebuffer},
+#endif
     //{Py_tp_methods, CMP_TexturePy_methods},
     {0, NULL},
 };
