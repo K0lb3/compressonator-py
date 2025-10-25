@@ -1,6 +1,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include "structmember.h"
+#include <string>
 
 #include "compressonator.h"
 #include "./CMP_CompressOptions.hpp"
@@ -36,6 +37,7 @@ static PyObject *CMP_ConvertTexturePy(PyObject *self, PyObject *args, PyObject *
     }
 
     CMP_ERROR err = CMP_ABORTED;
+    std::string err_msg;
     Py_BEGIN_ALLOW_THREADS;
     try
     {
@@ -65,12 +67,17 @@ static PyObject *CMP_ConvertTexturePy(PyObject *self, PyObject *args, PyObject *
     }
     catch (std::exception &e)
     {
-        return PyErr_Format(PyExc_RuntimeError, e.what());
+        err_msg = e.what();
     }
     Py_END_ALLOW_THREADS;
     if (err != CMP_OK)
     {
-        return PyErr_Format(PyExc_RuntimeError, "failed to convert with error %d", (int)err);
+        err_msg = "failed to convert with error " + std::to_string((int)err);
+        PyErr_SetString(PyExc_RuntimeError, err_msg.c_str());
+    }
+    else if (!err_msg.empty())
+    {
+        PyErr_SetString(PyExc_RuntimeError, err_msg.c_str());
     }
     Py_RETURN_NONE;
 }
