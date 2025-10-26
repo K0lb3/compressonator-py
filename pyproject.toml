@@ -41,3 +41,12 @@ tests = [
     "imagehash >=4.3.1",
     "psutil >= 6.0.0",
 ]
+
+[tool.cibuildwheel.linux]
+archs = ["x86_64", "i686", "aarch64", "ppc64le", "s390x", "armv7l"]
+
+[tool.cibuildwheel.macos]
+archs = ["x86_64", "arm64"]
+
+[tool.cibuildwheel.windows]
+archs = ["AMD64", "x86", "ARM64"]
