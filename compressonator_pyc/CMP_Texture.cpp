@@ -280,9 +280,9 @@ int CMP_TexturePy_getbuffer(CMP_TexturePy *self, Py_buffer *view, int flags)
         return -1;
     }
     Py_INCREF(self);
-    view->obj = self;
+    view->obj = reinterpret_cast<PyObject *>(self);
     view->buf = self->buffer_view.buf;
-    view->len = self->dwDataSize;
+    view->len = self->texture.dwDataSize;
     view->readonly = self->buffer_view.readonly ? 1 : 0;
     view->shape = NULL;
     view->strides = NULL;
@@ -300,11 +300,11 @@ int CMP_TexturePy_getbuffer(CMP_TexturePy *self, Py_buffer *view, int flags)
         view->shape = new Py_ssize_t[size]();
         if (size == 1)
         {
-            view->shape[0] = static_cast<Py_ssize_t>(self->dwDataSize / info.itemsize);
+            view->shape[0] = static_cast<Py_ssize_t>(self->texture.dwDataSize / info.itemsize);
         }
         else
         {
-            view->shape[0] = static_cast<Py_ssize_t>(self->dwDataSize / (info.channels * info.itemsize));
+            view->shape[0] = static_cast<Py_ssize_t>(self->texture.dwDataSize / (info.channels * info.itemsize));
             view->shape[1] = info.channels;
         }
     }
