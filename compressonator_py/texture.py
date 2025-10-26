@@ -28,3 +28,29 @@ class CMP_Texture(CMP_TextureBase):
         )
         CMP_ConvertTexture(self, dst, options)
         return dst
+
+    def __repr__(self):
+        return f"<CMP_Texture {self.dwWidth}x{self.dwHeight} Format={self.format.name}>"
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, CMP_Texture):
+            return NotImplemented
+        return (
+            self.dwWidth == other.dwWidth
+            and self.dwHeight == other.dwHeight
+            and self.format == other.format
+            and self.pData == other.pData
+        )
+
+    # Convenience aliases
+    @property
+    def data(self):  # type: ignore[override]
+        return self.pData
+
+    @property
+    def width(self):  # type: ignore[override]
+        return self.dwWidth
+
+    @property
+    def height(self):  # type: ignore[override]
+        return self.dwHeight
