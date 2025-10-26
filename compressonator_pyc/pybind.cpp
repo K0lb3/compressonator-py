@@ -36,6 +36,11 @@ static PyObject *CMP_ConvertTexturePy(PyObject *self, PyObject *args, PyObject *
         return PyErr_Format(PyExc_TypeError, "options has to be None or of type CMP_CompressOptions");
     }
 
+    if (dest->buffer_view.readonly == true)
+    {
+        return PyErr_Format(PyExc_RuntimeError, "destination texture pData object is not writable");
+    }
+
     CMP_ERROR err = CMP_ABORTED;
     std::string err_msg;
     Py_BEGIN_ALLOW_THREADS;
