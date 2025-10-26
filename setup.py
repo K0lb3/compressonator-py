@@ -26,7 +26,7 @@ class BuildPart:
 
 
 class CompressonatorPy(BuildPart):
-    sources = ["compressonator_pyc/pybind.cpp"]
+    sources = ["compressonator_pyc/pybind.cpp", "compressonator_pyc/CMP_Texture.cpp"]
     include_dirs = ["compressonator_pyc"]
 
 
