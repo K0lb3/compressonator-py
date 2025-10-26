@@ -129,14 +129,14 @@ class CustomBuildExt(build_ext):
         avx512 = f"{CMP_CORE_DIR}/source/core_simd_avx512.cpp"
 
         if self.compiler.compiler_type == "msvc":
-            sse_arg = ""
-            avx_arg = "/arch:AVX2"
-            avx512_arg = "/arch:AVX512"
+            sse_args = ["/arch:SSE4.1"]
+            avx_args = ["/arch:AVX2"]
+            avx512_args = ["/arch:AVX512"]
             extra_args = ["/std:c++14"]
         else:
-            sse_arg = "-march=nehalem"  # unix
-            avx_arg = "-march=haswell"
-            avx512_arg = "-march=knl"
+            sse_args = ["-msse4.1"]
+            avx_args = ["-mavx2"]
+            avx512_args = ["-mavx512f"]
             extra_args = ["-std=c++14", "-fpermissive"]
 
         ext.extra_compile_args.extend(extra_args)
@@ -144,10 +144,10 @@ class CustomBuildExt(build_ext):
         for undef in ext.undef_macros:
             macros.append((undef,))
 
-        for src, arg in [
-            (sse, sse_arg),
-            (avx, avx_arg),
-            (avx512, avx512_arg),
+        for src, args in [
+            (sse, sse_args),
+            (avx, avx_args),
+            (avx512, avx512_args),
         ]:
             ext.extra_objects.extend(
                 self.compiler.compile(
@@ -156,7 +156,7 @@ class CustomBuildExt(build_ext):
                     macros=macros,
                     include_dirs=CompressonatorCore.include_dirs,
                     debug=self.debug,
-                    extra_postargs=[*ext.extra_compile_args, arg],
+                    extra_postargs=[*ext.extra_compile_args, *args],
                     depends=ext.depends,
                 )
             )
