@@ -122,12 +122,18 @@ class CompressonatorLib(BuildPart):
     ]
 
 
+class CompressonatorCoreSIMD(BuildPart):
+    stub = "compressonator_pyc/core_simd_stub.cpp"
+    sse = f"{CMP_CORE_DIR}/source/core_simd_sse.cpp"
+    avx = f"{CMP_CORE_DIR}/source/core_simd_avx.cpp"
+    avx512 = f"{CMP_CORE_DIR}/source/core_simd_avx512.cpp"
+
+    sources = [stub, sse, avx, avx512]
+    include_dirs = [f"{CMP_CORE_DIR}/source"]
+
+
 class CustomBuildExt(build_ext):
     def build_simd_lib(self, ext: Exception) -> None:
-        sse = f"{CMP_CORE_DIR}/source/core_simd_sse.cpp"
-        avx = f"{CMP_CORE_DIR}/source/core_simd_avx.cpp"
-        avx512 = f"{CMP_CORE_DIR}/source/core_simd_avx512.cpp"
-
         if self.compiler.compiler_type == "msvc":
             sse_args = ["/arch:SSE4.1"]
             avx_args = ["/arch:AVX2"]
@@ -145,9 +151,9 @@ class CustomBuildExt(build_ext):
             macros.append((undef,))
 
         for src, args in [
-            (sse, sse_args),
-            (avx, avx_args),
-            (avx512, avx512_args),
+            (CompressonatorCoreSIMD.sse, sse_args),
+            (CompressonatorCoreSIMD.avx, avx_args),
+            (CompressonatorCoreSIMD.avx512, avx512_args),
         ]:
             ext.extra_objects.extend(
                 self.compiler.compile(
@@ -162,7 +168,16 @@ class CustomBuildExt(build_ext):
             )
 
     def build_extension(self, ext) -> None:
-        self.build_simd_lib(ext)
+        # remove all simd sources, they will be built separately
+        ext.sources.append(CompressonatorCoreSIMD.sse)
+        ext.sources.append(CompressonatorCoreSIMD.avx)
+        ext.sources.append(CompressonatorCoreSIMD.avx512)
+
+        if self.plat_name.endswith(("amd64", "x86_64")):
+            # simd gets build, so remove stub
+            ext.sources.remove(CompressonatorCoreSIMD.stub)
+            self.build_simd_lib(ext)
+
         super().build_extension(ext)
 
 
@@ -170,6 +185,7 @@ setup(
     name="compressonator-py",
     packages=["compressonator_py"],
     package_data={"compressonator_py": ["*.py", "*.pyi", "py.typed"]},
+    include_package_data=True,
     ext_modules=[
         Extension(
             name="compressonator_py._compressonator",
@@ -177,6 +193,8 @@ setup(
                 *CompressonatorPy.sources,
                 *CompressonatorCore.sources,
                 *CompressonatorLib.sources,
+                # including all to goat sdist into including them
+                *CompressonatorCoreSIMD.sources,
             ],
             include_dirs=[
                 *CompressonatorPy.include_dirs,
