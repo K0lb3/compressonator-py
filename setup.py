@@ -175,10 +175,11 @@ class CustomBuildExt(build_ext):
             ext.sources.remove(src)
 
         if self.compiler.compiler_type == "msvc":
-            extra_args = ["/std:c++14", "/w"]
+            extra_args = ["/std:c++17", "/w"]
         else:
             extra_args = [
-                "-std=c++14",
+                # C++14 doesn't work for Mac due to __global usage
+                "-std=c++11",
                 "-fpermissive",
                 "-Wno-narrowing",
                 "--no-warnings",
@@ -235,9 +236,6 @@ setup(
             language="c++",
             define_macros=[
                 ("OPTION_BUILD_ASTC", "1"),
-                # MacOS fix
-                ("DCOMPRESSONATOR_GLOBAL", ""),
-                ("__global", "COMPRESSONATOR_GLOBAL"),
                 # limited api
                 *optional_macros,
             ],
