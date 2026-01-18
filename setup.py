@@ -178,14 +178,16 @@ class CustomBuildExt(build_ext):
             extra_args = ["/std:c++17", "/w"]
         else:
             extra_args = [
-                # C++14 doesn't work for Mac due to __global usage
-                "-std=c++11",
+                "-std=c++14",
                 "-fpermissive",
                 "-Wno-narrowing",
                 "--no-warnings",
                 # Musl fix
                 "-Dnullptr=0",
                 "-DNULL=0",
+                # Mac fixes
+                "-D_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER",
+                "-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS"
             ]
         ext.extra_compile_args.extend(extra_args)
 

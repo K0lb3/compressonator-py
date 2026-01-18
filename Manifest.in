@@ -1,10 +1,10 @@
-recursive-include compressonator_pyc *
-recursive-include compressonator/build/sdk *
-recursive-include compressonator/cmp_core *
-recursive-include compressonator/cmp_compressonatorlib *
-recursive-include compressonator/applications/_libs/cmp_math *
-recursive-include compressonator/applications/_plugins/common *
-recursive-include compressonator/cmp_framework/common *
+recursive-include compressonator_pyc *.hpp
+recursive-include compressonator/build/sdk *.h
+recursive-include compressonator/cmp_core *.h
+recursive-include compressonator/cmp_compressonatorlib *.h
+recursive-include compressonator/applications/_libs/cmp_math *.h
+recursive-include compressonator/applications/_plugins/common *.h
+recursive-include compressonator/cmp_framework/common *.hpp
 
 include compressonator/license/astc/license.txt
 include compressonator/license/etcpak/license.txt
