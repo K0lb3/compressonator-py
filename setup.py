@@ -175,9 +175,14 @@ class CustomBuildExt(build_ext):
             ext.sources.remove(src)
 
         if self.compiler.compiler_type == "msvc":
-            extra_args = ["/std:c++14"]
+            extra_args = ["/std:c++14", "/w"]
         else:
-            extra_args = ["-std=c++14", "-fpermissive", "-Wno-narrowing"]
+            extra_args = [
+                "-std=c++14",
+                "-fpermissive",
+                "-Wno-narrowing",
+                "--no-warnings",
+            ]
         ext.extra_compile_args.extend(extra_args)
 
         if self.plat_name.endswith(("amd64", "x86_64")):

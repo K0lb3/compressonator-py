@@ -132,7 +132,7 @@ CMP_TexturePy_get_pData(PyObject *self, void *closure)
 typedef struct
 {
     uint8_t itemsize;
-    const char *format;
+    char *format;
     uint8_t channels;
 } FormatInfo;
 
