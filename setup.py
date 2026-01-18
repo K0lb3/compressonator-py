@@ -151,7 +151,12 @@ class CustomBuildExt(build_ext):
                 "-std=c++14",
                 "-fpermissive",
                 "-Wno-narrowing",
-                "-D__global=__attribute__(())",
+                # musl fix
+                "-Dnullptr=0",
+                "-DNULL=0",
+                # MacOS fix
+                "-DCOMPRESSONATOR_GLOBAL=",
+                "-D__global=COMPRESSONATOR_GLOBAL",
             ]
 
         ext.extra_compile_args.extend(extra_args)
