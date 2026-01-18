@@ -34,12 +34,7 @@ dynamic = ["version"]
 version = { attr = "compressonator_py.__version__" }
 
 [project.optional-dependencies]
-tests = [
-    "pytest >= 8.3.3",
-    "pillow >=10.4.0",
-    "imagehash >=4.3.1",
-    "psutil >= 6.0.0",
-]
+tests = ["pytest >= 8.3.3"]
 
 [tool.cibuildwheel]
 build = "cp38-* cp39-* cp310-* cp311-* pp3*"
