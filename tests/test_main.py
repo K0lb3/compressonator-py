@@ -13,6 +13,7 @@ from compressonator_py import CMP_ConvertTexture, CMP_Format, CMP_Texture
 #     assert tex.pData != tex2.pData
 #     assert tex.pData == tex3.pData
 
+
 def test_texture_creation():
     data = bytes(256 * 256 * 4)
     tex = CMP_Texture(256, 256, 0, CMP_Format.RGBA_8888, pData=data)
@@ -25,4 +26,3 @@ def test_texture_creation():
 
     assert tex.pData != tex2.pData
     assert tex.pData == tex3.pData
-    

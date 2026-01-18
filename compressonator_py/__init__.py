@@ -4,3 +4,11 @@ from .texture import CMP_Texture
 from .enums import CMP_Format
 
 __version__ = "0.0.1"
+
+__all__ = [
+    "CMP_ConvertTexture",
+    "CMP_CompressOptions",
+    "CMP_Texture",
+    "CMP_Format",
+    "__version__",
+]
