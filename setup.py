@@ -197,6 +197,10 @@ class bdist_wheel_abi3(bdist_wheel):
         return python, abi, plat
 
 
+optional_macros = []
+if USE_LIMITED_API:
+    optional_macros.append(("Py_LIMITED_API", "0x030B0000"))
+
 setup(
     name="compressonator-py",
     packages=["compressonator_py"],
@@ -220,13 +224,8 @@ setup(
             language="c++",
             define_macros=[
                 ("OPTION_BUILD_ASTC", "1"),
-                # ("OPTION_BUILD_BROTLIG", "1")
-            ]
-            + [
-                ("Py_LIMITED_API", "0x030B0000"),
-            ]
-            if USE_LIMITED_API
-            else [],  # type: ignore
+                *optional_macros,
+            ],
             py_limited_api=USE_LIMITED_API,
         )
     ],
