@@ -8,7 +8,7 @@ from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 from setuptools.command.bdist_wheel import bdist_wheel
 
-LOCAL = os.path.dirname(os.path.abspath(__file__))
+LOCAL = ""
 CMP_DIR = os.path.join(LOCAL, "compressonator")
 CMP_CORE_DIR = os.path.join(CMP_DIR, "cmp_core")
 CMP_COMPRESSONATORLIB_DIR = os.path.join(CMP_DIR, "cmp_compressonatorlib")
