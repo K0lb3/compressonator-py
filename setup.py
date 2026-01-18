@@ -142,24 +142,11 @@ class CustomBuildExt(build_ext):
             sse_args = ["/arch:SSE4.1"]
             avx_args = ["/arch:AVX2"]
             avx512_args = ["/arch:AVX512"]
-            extra_args = ["/std:c++14"]
         else:
             sse_args = ["-msse4.1"]
             avx_args = ["-mavx2"]
             avx512_args = ["-mavx512f"]
-            extra_args = [
-                "-std=c++14",
-                "-fpermissive",
-                "-Wno-narrowing",
-                # musl fix
-                "-Dnullptr=0",
-                "-DNULL=0",
-                # MacOS fix
-                "-DCOMPRESSONATOR_GLOBAL=",
-                "-D__global=COMPRESSONATOR_GLOBAL",
-            ]
 
-        ext.extra_compile_args.extend(extra_args)
         macros = ext.define_macros[:]
         for undef in ext.undef_macros:
             macros.append((undef,))
@@ -186,6 +173,12 @@ class CustomBuildExt(build_ext):
         # only added directly so they get included in sdist
         for src in CompressonatorCoreSIMD.sources:
             ext.sources.remove(src)
+
+        if self.compiler.compiler_type == "msvc":
+            extra_args = ["/std:c++14"]
+        else:
+            extra_args = ["-std=c++14", "-fpermissive", "-Wno-narrowing"]
+        ext.extra_compile_args.extend(extra_args)
 
         if self.plat_name.endswith(("amd64", "x86_64")):
             # build simd lib
@@ -234,6 +227,13 @@ setup(
             language="c++",
             define_macros=[
                 ("OPTION_BUILD_ASTC", "1"),
+                # Musl fix
+                ("nullptr", "0"),
+                ("NULL", "0"),
+                # MacOS fix
+                ("DCOMPRESSONATOR_GLOBAL", ""),
+                ("__global", "COMPRESSONATOR_GLOBAL"),
+                # limited api
                 *optional_macros,
             ],
             py_limited_api=USE_LIMITED_API,
