@@ -182,6 +182,9 @@ class CustomBuildExt(build_ext):
                 "-fpermissive",
                 "-Wno-narrowing",
                 "--no-warnings",
+                # Musl fix
+                "-Dnullptr=0",
+                "-DNULL=0",
             ]
         ext.extra_compile_args.extend(extra_args)
 
