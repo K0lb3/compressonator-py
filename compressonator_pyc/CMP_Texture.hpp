@@ -53,8 +53,8 @@ static PyType_Slot CMP_TexturePy_slots[] = {
     {Py_tp_members, CMP_TexturePy_members},
 // impl since 3.9 (removed from 3.8), limited api since 3.11
 #if (!defined(PY_LIMITED_API) && PY_VERSION_HEX >= 0x030A0000) || (defined(PY_LIMITED_API) && PY_LIMITED_API + 0 >= 0x030B0000)
-    {Py_bf_getbuffer, (getbufferproc)CMP_TexturePy_getbuffer},
-    {Py_bf_releasebuffer, (releasebufferproc)CMP_TexturePy_releasebuffer},
+    {Py_bf_getbuffer, CMP_TexturePy_getbuffer},
+    {Py_bf_releasebuffer, CMP_TexturePy_releasebuffer},
 #endif
     //{Py_tp_methods, CMP_TexturePy_methods},
     {0, NULL},
