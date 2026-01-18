@@ -2,14 +2,18 @@ from __future__ import annotations
 
 import os
 from itertools import chain
+import sys
 
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
+from setuptools.command.bdist_wheel import bdist_wheel
 
-LOCAL = ""
+LOCAL = os.path.dirname(os.path.abspath(__file__))
 CMP_DIR = os.path.join(LOCAL, "compressonator")
 CMP_CORE_DIR = os.path.join(CMP_DIR, "cmp_core")
 CMP_COMPRESSONATORLIB_DIR = os.path.join(CMP_DIR, "cmp_compressonatorlib")
+
+USE_LIMITED_API = sys.version_info >= (3, 11) and os.getenv("CIBUILDWHEEL") is not None
 
 
 def glob(pattern: str) -> list[str]:
@@ -168,17 +172,29 @@ class CustomBuildExt(build_ext):
             )
 
     def build_extension(self, ext) -> None:
-        # remove all simd sources, they will be built separately
-        ext.sources.append(CompressonatorCoreSIMD.sse)
-        ext.sources.append(CompressonatorCoreSIMD.avx)
-        ext.sources.append(CompressonatorCoreSIMD.avx512)
+        # remove simd sources, we will build them conditionally below
+        # only added directly so they get included in sdist
+        for src in CompressonatorCoreSIMD.sources:
+            ext.sources.remove(src)
 
         if self.plat_name.endswith(("amd64", "x86_64")):
-            # simd gets build, so remove stub
-            ext.sources.remove(CompressonatorCoreSIMD.stub)
+            # build simd lib
             self.build_simd_lib(ext)
+        else:
+            ext.sources.append(CompressonatorCoreSIMD.stub)
 
         super().build_extension(ext)
+
+
+class bdist_wheel_abi3(bdist_wheel):
+    def get_tag(self):
+        python, abi, plat = super().get_tag()
+
+        if python.startswith("cp") and USE_LIMITED_API:
+            # on CPython, our wheels are abi3 and compatible back to 3.11
+            return "cp311", "abi3", plat
+
+        return python, abi, plat
 
 
 setup(
@@ -205,8 +221,14 @@ setup(
             define_macros=[
                 ("OPTION_BUILD_ASTC", "1"),
                 # ("OPTION_BUILD_BROTLIG", "1")
-            ],
+            ]
+            + [
+                ("Py_LIMITED_API", "0x030B0000"),
+            ]
+            if USE_LIMITED_API
+            else [],  # type: ignore
+            py_limited_api=USE_LIMITED_API,
         )
     ],
-    cmdclass={"build_ext": CustomBuildExt},
+    cmdclass={"build_ext": CustomBuildExt, "bdist_wheel": bdist_wheel_abi3},
 )
