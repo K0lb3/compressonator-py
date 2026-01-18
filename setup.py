@@ -147,7 +147,12 @@ class CustomBuildExt(build_ext):
             sse_args = ["-msse4.1"]
             avx_args = ["-mavx2"]
             avx512_args = ["-mavx512f"]
-            extra_args = ["-std=c++14", "-fpermissive"]
+            extra_args = [
+                "-std=c++14",
+                "-fpermissive",
+                "-Wno-narrowing",
+                "-D__global=__attribute__(())",
+            ]
 
         ext.extra_compile_args.extend(extra_args)
         macros = ext.define_macros[:]
