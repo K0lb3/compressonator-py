@@ -227,9 +227,6 @@ setup(
             language="c++",
             define_macros=[
                 ("OPTION_BUILD_ASTC", "1"),
-                # Musl fix
-                ("nullptr", "0"),
-                ("NULL", "0"),
                 # MacOS fix
                 ("DCOMPRESSONATOR_GLOBAL", ""),
                 ("__global", "COMPRESSONATOR_GLOBAL"),

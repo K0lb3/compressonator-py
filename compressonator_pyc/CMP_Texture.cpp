@@ -1,5 +1,6 @@
 #include "./CMP_Texture.hpp"
 #include <string>
+#include <cstring>
 
 int CMP_TexturePy_init(CMP_TexturePy *self, PyObject *args, PyObject *kwargs)
 {
@@ -124,14 +125,14 @@ CMP_TexturePy_get_pData(PyObject *self, void *closure)
     {
         Py_RETURN_NONE; // or raise, depending on your contract
     }
-    Py_INCREF(obj->pDataObj);
+    Py_IncRef(obj->pDataObj);
     return obj->pDataObj; // new reference
 }
 
 typedef struct
 {
     uint8_t itemsize;
-    char *format;
+    const char *format;
     uint8_t channels;
 } FormatInfo;
 
@@ -279,7 +280,7 @@ int CMP_TexturePy_getbuffer(CMP_TexturePy *self, Py_buffer *view, int flags)
         PyErr_SetString(PyExc_BufferError, "no backing buffer available");
         return -1;
     }
-    Py_INCREF(self);
+    Py_IncRef((PyObject *)self);
     view->obj = reinterpret_cast<PyObject *>(self);
     view->buf = self->buffer_view.buf;
     view->len = self->texture.dwDataSize;
@@ -342,7 +343,7 @@ void CMP_TexturePy_releasebuffer(PyObject *exporter, Py_buffer *view)
     /* DECREF the exported object which was INCREF'd in getbuffer */
     if (view->obj)
     {
-        Py_DECREF(view->obj);
+        Py_DecRef(view->obj);
         view->obj = NULL;
     }
 }
