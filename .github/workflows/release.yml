@@ -132,7 +132,7 @@ jobs:
         build_wheels_qemu,
         build_wheels_ubuntu_manylinux,
         build_wheels_ubuntu_musllinux,
-        build_sdist,
+        # build_sdist,
       ]
     runs-on: ubuntu-latest
     environment: release
