@@ -145,7 +145,7 @@ class CustomBuildExt(build_ext):
         else:
             sse_args = ["-msse4.1"]
             avx_args = ["-mavx2"]
-            avx512_args = ["-mevex512", "-mavx512f"]
+            avx512_args = ["-mavx512f"] # -mevex512"
 
         macros = ext.define_macros[:]
         for undef in ext.undef_macros:
