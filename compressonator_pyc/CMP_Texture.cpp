@@ -83,8 +83,7 @@ void CMP_TexturePy_dealloc(CMP_TexturePy *self)
         self->pDataObj = nullptr;
     }
     self->texture.pData = nullptr;
-    /* Use the type's tp_free to match allocation from PyType_GenericNew */
-    Py_TYPE((PyObject *)self)->tp_free((PyObject *)self);
+    PyObject_Free((void *)self);
 }
 
 // PyObject *

@@ -185,9 +185,6 @@ class CustomBuildExt(build_ext):
                 # Musl fix
                 "-Dnullptr=0",
                 "-DNULL=0",
-                # Mac fixes
-                "-D_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER",
-                "-D_LIBCPP_DISABLE_VISIBILITY_ANNOTATIONS"
             ]
         ext.extra_compile_args.extend(extra_args)
 
