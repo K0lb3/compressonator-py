@@ -180,7 +180,7 @@ class CustomBuildExt(build_ext):
         else:
             ext.extra_compile_args.extend(
                 [
-                    "-std=c++17",
+                    "-std=c++14",
                     "-fpermissive",
                     "-Wno-narrowing",
                     "--no-warnings",
