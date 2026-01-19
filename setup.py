@@ -145,7 +145,7 @@ class CustomBuildExt(build_ext):
         else:
             sse_args = ["-msse4.1"]
             avx_args = ["-mavx2"]
-            avx512_args = ["-mavx512f"]
+            avx512_args = ["-mevex512", "-mavx512f"]
 
         macros = ext.define_macros[:]
         for undef in ext.undef_macros:
@@ -175,18 +175,23 @@ class CustomBuildExt(build_ext):
             ext.sources.remove(src)
 
         if self.compiler.compiler_type == "msvc":
-            extra_args = ["/std:c++17", "/w"]
+            ext.extra_compile_args.extend(["/std:c++17", "/w", "-D_WIN32"])
+            ext.extra_link_args.extend(["/INCREMENTAL:NO"])
         else:
-            extra_args = [
-                "-std=c++14",
-                "-fpermissive",
-                "-Wno-narrowing",
-                "--no-warnings",
-                # Musl fix
-                "-Dnullptr=0",
-                "-DNULL=0",
-            ]
-        ext.extra_compile_args.extend(extra_args)
+            ext.extra_compile_args.extend(
+                [
+                    "-std=c++17",
+                    "-fpermissive",
+                    "-Wno-narrowing",
+                    "--no-warnings",
+                    "-fPIC",
+                    "-Wno-write-strings",
+                    # Musl fix
+                    "-Dnullptr=0",
+                    "-DNULL=0",
+                ]
+            )
+            ext.extra_link_args.extend([])
 
         if self.plat_name.endswith(("amd64", "x86_64")):
             # build simd lib

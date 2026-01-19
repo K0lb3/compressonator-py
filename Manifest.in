@@ -4,7 +4,7 @@ recursive-include compressonator/cmp_core *.h
 recursive-include compressonator/cmp_compressonatorlib *.h
 recursive-include compressonator/applications/_libs/cmp_math *.h
 recursive-include compressonator/applications/_plugins/common *.h
-recursive-include compressonator/cmp_framework/common *.hpp
+recursive-include compressonator/cmp_framework/common *.h
 
 include compressonator/license/astc/license.txt
 include compressonator/license/etcpak/license.txt
