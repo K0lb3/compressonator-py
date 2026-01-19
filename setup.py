@@ -180,7 +180,7 @@ class CustomBuildExt(build_ext):
 
             if self.plat_name.lower().endswith("arm64"):
                 # no __cpuindex on arm64 msvc
-                ext.extra_compile_args.append("/D__cpuidex=compat__cpuidex")
+                ext.extra_compile_args.append("/DIMPL__cpuidex")
         else:
             ext.extra_compile_args.extend(
                 [

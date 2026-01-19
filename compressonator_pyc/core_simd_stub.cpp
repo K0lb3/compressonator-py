@@ -20,3 +20,18 @@ float avx512_bc1ComputeBestEndpoints(float *, float *, float *, float *,
 {
   throw "Not implemented";
 }
+
+#ifdef IMPL__cpuidex
+void __cpuidex(int cpuInfo[4],
+               int function_id,
+               int subfunction_id)
+{
+  (void)function_id;
+  (void)subfunction_id;
+  cpuInfo[0] = 0;
+  cpuInfo[1] = 0;
+  cpuInfo[2] = 0;
+  cpuInfo[3] = 0;
+}
+#undef IMPL__cpuidex
+#endif
