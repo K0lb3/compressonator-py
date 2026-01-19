@@ -20,17 +20,3 @@ float avx512_bc1ComputeBestEndpoints(float *, float *, float *, float *,
 {
   throw "Not implemented";
 }
-
-#ifdef _WIN32
-#include <intrin.h>
-#ifndef __cpuidex
-extern "C"
-{
-  inline void __cpuidex(int CPUInfo[4], int function_id, int subfunction_id)
-  {
-    (void)function_id;
-    (void)subfunction_id;
-    CPUInfo[0] = CPUInfo[1] = CPUInfo[2] = CPUInfo[3] = 0;
-  }
-}
-#endif

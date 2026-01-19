@@ -145,7 +145,7 @@ class CustomBuildExt(build_ext):
         else:
             sse_args = ["-msse4.1"]
             avx_args = ["-mavx2"]
-            avx512_args = ["-mavx512f"] # -mevex512"
+            avx512_args = ["-mavx512f"]  # -mevex512"
 
         macros = ext.define_macros[:]
         for undef in ext.undef_macros:
@@ -177,6 +177,10 @@ class CustomBuildExt(build_ext):
         if self.compiler.compiler_type == "msvc":
             ext.extra_compile_args.extend(["/std:c++17", "/w", "-D_WIN32"])
             ext.extra_link_args.extend(["/INCREMENTAL:NO"])
+
+            if self.plat_name.lower().endswith("arm64"):
+                # no __cpuindex on arm64 msvc
+                ext.extra_compile_args.append("/D__cpuidex=compat__cpuidex")
         else:
             ext.extra_compile_args.extend(
                 [
