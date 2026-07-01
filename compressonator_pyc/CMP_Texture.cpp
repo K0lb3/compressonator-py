@@ -83,7 +83,7 @@ void CMP_TexturePy_dealloc(CMP_TexturePy *self)
         self->pDataObj = nullptr;
     }
     self->texture.pData = nullptr;
-    PyObject_Free((void *)self);
+    Py_TYPE(self)->tp_free((PyObject *)self);
 }
 
 // PyObject *
@@ -339,10 +339,12 @@ void CMP_TexturePy_releasebuffer(PyObject *exporter, Py_buffer *view)
         delete[] view->strides;
         view->strides = NULL;
     }
-    /* DECREF the exported object which was INCREF'd in getbuffer */
+    
+    /* no DECREF of the exported object which was INCREF'd in getbuffer 
+      as it's against the spec */
     if (view->obj)
     {
-        Py_DecRef(view->obj);
+        //Py_DecRef(view->obj);
         view->obj = NULL;
     }
 }
