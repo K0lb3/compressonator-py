@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import os
-from itertools import chain
 import sys
+from itertools import chain
+from typing import ClassVar
 
+import nanobind as nb
 from setuptools import Extension, setup
-from setuptools.command.build_ext import build_ext
 from setuptools.command.bdist_wheel import bdist_wheel
+from setuptools.command.build_ext import build_ext
 
 LOCAL = ""
 CMP_DIR = os.path.join(LOCAL, "compressonator")
@@ -25,13 +27,24 @@ def glob(pattern: str) -> list[str]:
 
 
 class BuildPart:
-    sources: list[str]
-    include_dirs: list[str]
+    sources: ClassVar[list[str]]
+    include_dirs: ClassVar[list[str]]
 
 
 class CompressonatorPy(BuildPart):
-    sources = ["compressonator_pyc/pybind.cpp", "compressonator_pyc/CMP_Texture.cpp"]
-    include_dirs = ["compressonator_pyc"]
+    sources = [
+        "compressonator_pyc/nano.cpp",
+        os.path.join(nb.source_dir(), "nb_combined.cpp"),
+    ]
+    include_dirs = [
+        nb.include_dir(),
+        os.path.join(
+            os.path.dirname(nb.source_dir()),
+            "ext",
+            "robin_map",
+            "include",
+        ),
+    ]
 
 
 class CompressonatorCore(BuildPart):
@@ -184,18 +197,29 @@ class CustomBuildExt(build_ext):
         else:
             ext.extra_compile_args.extend(
                 [
-                    "-std=c++14",
                     "-fpermissive",
                     "-Wno-narrowing",
                     "--no-warnings",
                     "-fPIC",
                     "-Wno-write-strings",
                     # Musl fix
-                    "-Dnullptr=0",
-                    "-DNULL=0",
+                    # "-Dnullptr=0",
+                    # "-DNULL=0",
                 ]
             )
             ext.extra_link_args.extend([])
+
+            # small hack as modern gcc and clang error if std=c++17 is passed to non C++ code....
+            # and the ati code is C code
+            orig_compile = self.compiler._compile
+
+            def _compile_filter_flags(obj, src, ext, cc_args, postargs, extra_postargs):
+                current_postargs = list(extra_postargs)
+                if src.endswith((".cpp", ".cxx", ".cc")):
+                    current_postargs.append("-std=c++17")
+                return orig_compile(obj, src, ext, cc_args, postargs, current_postargs)
+
+            self.compiler._compile = _compile_filter_flags
 
         if self.plat_name.endswith(("amd64", "x86_64")):
             # build simd lib
@@ -244,6 +268,10 @@ setup(
             language="c++",
             define_macros=[
                 ("OPTION_BUILD_ASTC", "1"),
+                # ("USE_LOSSLESS_COMPRESSION", "1"), # brotli
+                ("USE_APC", "1"),
+                ("USE_GTC", "1"),
+                ("USE_BASIS", "1"),
                 # limited api
                 *optional_macros,
             ],

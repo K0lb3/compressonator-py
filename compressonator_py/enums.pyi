@@ -1,3 +1,5 @@
+from enum import IntEnum
+
 # =====================================================================
 #  Copyright (c) 2007-2024    Advanced Micro Devices, Inc. All rights reserved.
 #  Copyright (c) 2004-2006    ATI Technologies Inc.
@@ -23,8 +25,6 @@
 #  \file Compressonator.h
 #
 # =====================================================================
-from enum import IntEnum
-
 
 class CMP_Format(IntEnum):
     """
@@ -239,17 +239,20 @@ class CMP_Format(IntEnum):
         Eight bits per pixel.
     DXT5_RBxG: int
         DXGI_FORMAT_UNKNOWN
-        swizzled DXT5 format with the green component swizzled into the alpha channel & the blue component swizzled into the green channel.
+        swizzled DXT5 format with the green component swizzled into the alpha channel &
+        the blue component swizzled into the green channel.
         Eight bits per pixel.
     DXT5_xRBG: int
-        DXGI_FORMAT_UNKNOWN swizzled DXT5 format with the green component swizzled into the alpha channel & the component swizzled into the green channel.
+        DXGI_FORMAT_UNKNOWN swizzled DXT5 format with the green component swizzled into the alpha channel &
+        the component swizzled into the green channel.
         Eight bits per pixel.
     DXT5_RGxB: int
         DXGI_FORMAT_UNKNOWN
         swizzled DXT5 format with the blue component swizzled into the alpha channel.
         Eight bits per pixel.
     DXT5_xGxR: int
-        two-component swizzled DXT5 format with the red component swizzled into the alpha channel & the green component in the green channel.
+        two-component swizzled DXT5 format with the red component swizzled into the alpha channel &
+        the green component in the green channel.
         Eight bits per pixel.
     ATC_RGB: int
         CMP - a compressed RGB format.
@@ -398,103 +401,102 @@ class CMP_Format(IntEnum):
     BASIS = 0x0B03
     MAX = 0xFFFF
 
+# directly handled as exception
+# class CMP_Error(IntEnum):
+#     """
+#     Compress error codes
 
-class CMP_Error(IntEnum):
-    """
-    Compress error codes
+#     Attributes
+#     ----------
+#     OK
+#         Ok.
+#     ABORTED
+#         The conversion was aborted.
+#     ERR_INVALID_SOURCE_TEXTURE
+#         The source texture is invalid.
+#     ERR_INVALID_DEST_TEXTURE
+#         The destination texture is invalid.
+#     ERR_UNSUPPORTED_SOURCE_FORMAT
+#         The source format is not a supported format.
+#     ERR_UNSUPPORTED_DEST_FORMAT
+#         The destination format is not a supported format.
+#     ERR_UNSUPPORTED_GPU_ASTC_DECODE
+#         The GPU hardware is not supported.
+#     ERR_UNSUPPORTED_GPU_BASIS_DECODE
+#         The GPU hardware is not supported.
+#     ERR_SIZE_MISMATCH
+#         The source and destination texture sizes do not match.
+#     ERR_UNABLE_TO_INIT_CODEC
+#         Compressonator was unable to initialize the codec needed for conversion.
+#     ERR_UNABLE_TO_INIT_DECOMPRESSLIB
+#         GPU_Decode Lib was unable to initialize the codec needed for decompression.
+#     ERR_UNABLE_TO_INIT_COMPUTELIB
+#         Compute Lib was unable to initialize the codec needed for compression.
+#     ERR_DESTINATION
+#         Error in compressing destination texture.
+#     ERR_MEM_ALLOC_FOR_MIPSET
+#         Memory Error: allocating MIPSet compression level data buffer.
+#     ERR_UNKNOWN_DESTINATION_FORMAT
+#         The destination Codec Type is unknown! In SDK refer to GetCodecType().
+#     ERR_FAILED_HOST_SETUP
+#         Failed to setup Host for processing.
+#     ERR_PLUGIN_FILE_NOT_FOUND
+#         The required plugin library was not found.
+#     ERR_UNABLE_TO_LOAD_FILE
+#         The requested file was not loaded.
+#     ERR_UNABLE_TO_CREATE_ENCODER
+#         Request to create an encoder failed.
+#     ERR_UNABLE_TO_LOAD_ENCODER
+#         Unable to load an encode library.
+#     ERR_NOSHADER_CODE_DEFINED
+#         No shader code is available for the requested framework.
+#     ERR_GPU_DOESNOT_SUPPORT_COMPUTE
+#         The GPU device selected does not support compute.
+#     ERR_NOPERFSTATS
+#         No Performance Stats are available.
+#     ERR_GPU_DOESNOT_SUPPORT_EXT
+#         The GPU does not support the requested compression extension!
+#     ERR_GAMMA_OUTOFRANGE
+#         Gamma value set for processing is out of range.
+#     ERR_PLUGIN_SHAREDIO_NOT_SET
+#         The plugin C_PluginSetSharedIO call was not set and is required for this plugin to operate.
+#     ERR_UNABLE_TO_INIT_D3DX
+#         Unable to initialize DirectX SDK or get a specific DX API.
+#     FRAMEWORK_NOT_INITIALIZED
+#         InitFramework failed or not called.
+#     ERR_GENERIC
+#         An unknown error occurred.
+#     """
 
-    Attributes
-    ----------
-    OK
-        Ok.
-    ABORTED
-        The conversion was aborted.
-    ERR_INVALID_SOURCE_TEXTURE
-        The source texture is invalid.
-    ERR_INVALID_DEST_TEXTURE
-        The destination texture is invalid.
-    ERR_UNSUPPORTED_SOURCE_FORMAT
-        The source format is not a supported format.
-    ERR_UNSUPPORTED_DEST_FORMAT
-        The destination format is not a supported format.
-    ERR_UNSUPPORTED_GPU_ASTC_DECODE
-        The GPU hardware is not supported.
-    ERR_UNSUPPORTED_GPU_BASIS_DECODE
-        The GPU hardware is not supported.
-    ERR_SIZE_MISMATCH
-        The source and destination texture sizes do not match.
-    ERR_UNABLE_TO_INIT_CODEC
-        Compressonator was unable to initialize the codec needed for conversion.
-    ERR_UNABLE_TO_INIT_DECOMPRESSLIB
-        GPU_Decode Lib was unable to initialize the codec needed for decompression.
-    ERR_UNABLE_TO_INIT_COMPUTELIB
-        Compute Lib was unable to initialize the codec needed for compression.
-    ERR_DESTINATION
-        Error in compressing destination texture.
-    ERR_MEM_ALLOC_FOR_MIPSET
-        Memory Error: allocating MIPSet compression level data buffer.
-    ERR_UNKNOWN_DESTINATION_FORMAT
-        The destination Codec Type is unknown! In SDK refer to GetCodecType().
-    ERR_FAILED_HOST_SETUP
-        Failed to setup Host for processing.
-    ERR_PLUGIN_FILE_NOT_FOUND
-        The required plugin library was not found.
-    ERR_UNABLE_TO_LOAD_FILE
-        The requested file was not loaded.
-    ERR_UNABLE_TO_CREATE_ENCODER
-        Request to create an encoder failed.
-    ERR_UNABLE_TO_LOAD_ENCODER
-        Unable to load an encode library.
-    ERR_NOSHADER_CODE_DEFINED
-        No shader code is available for the requested framework.
-    ERR_GPU_DOESNOT_SUPPORT_COMPUTE
-        The GPU device selected does not support compute.
-    ERR_NOPERFSTATS
-        No Performance Stats are available.
-    ERR_GPU_DOESNOT_SUPPORT_EXT
-        The GPU does not support the requested compression extension!
-    ERR_GAMMA_OUTOFRANGE
-        Gamma value set for processing is out of range.
-    ERR_PLUGIN_SHAREDIO_NOT_SET
-        The plugin C_PluginSetSharedIO call was not set and is required for this plugin to operate.
-    ERR_UNABLE_TO_INIT_D3DX
-        Unable to initialize DirectX SDK or get a specific DX API.
-    FRAMEWORK_NOT_INITIALIZED
-        InitFramework failed or not called.
-    ERR_GENERIC
-        An unknown error occurred.
-    """
-
-    OK = 0
-    ABORTED = 1
-    ERR_INVALID_SOURCE_TEXTURE = 2
-    ERR_INVALID_DEST_TEXTURE = 3
-    ERR_UNSUPPORTED_SOURCE_FORMAT = 4
-    ERR_UNSUPPORTED_DEST_FORMAT = 5
-    ERR_UNSUPPORTED_GPU_ASTC_DECODE = 6
-    ERR_UNSUPPORTED_GPU_BASIS_DECODE = 7
-    ERR_SIZE_MISMATCH = 8
-    ERR_UNABLE_TO_INIT_CODEC = 9
-    ERR_UNABLE_TO_INIT_DECOMPRESSLIB = 10
-    ERR_UNABLE_TO_INIT_COMPUTELIB = 11
-    ERR_DESTINATION = 12
-    ERR_MEM_ALLOC_FOR_MIPSET = 13
-    ERR_UNKNOWN_DESTINATION_FORMAT = 14
-    ERR_FAILED_HOST_SETUP = 15
-    ERR_PLUGIN_FILE_NOT_FOUND = 16
-    ERR_UNABLE_TO_LOAD_FILE = 17
-    ERR_UNABLE_TO_CREATE_ENCODER = 18
-    ERR_UNABLE_TO_LOAD_ENCODER = 19
-    ERR_NOSHADER_CODE_DEFINED = 20
-    ERR_GPU_DOESNOT_SUPPORT_COMPUTE = 21
-    ERR_NOPERFSTATS = 22
-    ERR_GPU_DOESNOT_SUPPORT_EXT = 23
-    ERR_GAMMA_OUTOFRANGE = 24
-    ERR_PLUGIN_SHAREDIO_NOT_SET = 25
-    ERR_UNABLE_TO_INIT_D3DX = 26
-    FRAMEWORK_NOT_INITIALIZED = 27
-    ERR_GENERIC = 28
-
+#     OK = 0
+#     ABORTED = 1
+#     ERR_INVALID_SOURCE_TEXTURE = 2
+#     ERR_INVALID_DEST_TEXTURE = 3
+#     ERR_UNSUPPORTED_SOURCE_FORMAT = 4
+#     ERR_UNSUPPORTED_DEST_FORMAT = 5
+#     ERR_UNSUPPORTED_GPU_ASTC_DECODE = 6
+#     ERR_UNSUPPORTED_GPU_BASIS_DECODE = 7
+#     ERR_SIZE_MISMATCH = 8
+#     ERR_UNABLE_TO_INIT_CODEC = 9
+#     ERR_UNABLE_TO_INIT_DECOMPRESSLIB = 10
+#     ERR_UNABLE_TO_INIT_COMPUTELIB = 11
+#     ERR_DESTINATION = 12
+#     ERR_MEM_ALLOC_FOR_MIPSET = 13
+#     ERR_UNKNOWN_DESTINATION_FORMAT = 14
+#     ERR_FAILED_HOST_SETUP = 15
+#     ERR_PLUGIN_FILE_NOT_FOUND = 16
+#     ERR_UNABLE_TO_LOAD_FILE = 17
+#     ERR_UNABLE_TO_CREATE_ENCODER = 18
+#     ERR_UNABLE_TO_LOAD_ENCODER = 19
+#     ERR_NOSHADER_CODE_DEFINED = 20
+#     ERR_GPU_DOESNOT_SUPPORT_COMPUTE = 21
+#     ERR_NOPERFSTATS = 22
+#     ERR_GPU_DOESNOT_SUPPORT_EXT = 23
+#     ERR_GAMMA_OUTOFRANGE = 24
+#     ERR_PLUGIN_SHAREDIO_NOT_SET = 25
+#     ERR_UNABLE_TO_INIT_D3DX = 26
+#     FRAMEWORK_NOT_INITIALIZED = 27
+#     ERR_GENERIC = 28
 
 class CMP_ComputeType(IntEnum):
     """
@@ -525,7 +527,6 @@ class CMP_ComputeType(IntEnum):
     GPU_VLK = 5
     GPU_HW = 6
 
-
 class CMP_Speed(IntEnum):
     """
     An enum selecting the speed vs. quality trade-off.
@@ -543,7 +544,6 @@ class CMP_Speed(IntEnum):
     Normal = 0
     Fast = 1
     SuperFast = 2
-
 
 class CMP_GPUDecode(IntEnum):
     """
@@ -564,7 +564,6 @@ class CMP_GPUDecode(IntEnum):
     DIRECTX = 1
     VULKAN = 2
     INVALID = 3
-
 
 class CMP_ChannelFormat(IntEnum):
     """
@@ -614,7 +613,6 @@ class CMP_ChannelFormat(IntEnum):
     YUV_4444 = 11
     _1010102 = 12
 
-
 class CMP_TextureDataType(IntEnum):
     """
     The type of data the texture represents.
@@ -655,7 +653,6 @@ class CMP_TextureDataType(IntEnum):
     _8 = 8
     _16 = 9
 
-
 class CMP_TextureType(IntEnum):
     """
     The type of the texture or Data.
@@ -683,6 +680,3 @@ class CMP_TextureType(IntEnum):
     _2D_Block = 3
     _1D = 4
     Unknown = 5
-
-
-__all__ = ("CMP_Format", "CMP_Error", "CMP_ComputeType")

@@ -16,7 +16,7 @@ pip install compressonator-py
 ## Usage
 
 ```python
-from compressonator_py import CMP_Texture, CMP_Format, CMP_ConvertTexture
+from compressonator_py import CMP_Texture, CMP_Format
 
 # simple roundtrip
 
@@ -27,7 +27,7 @@ data = bytes(width*height*4)
 tex = CMP_Texture(width, height, pitch, CMP_Format.RGBA_8888, pData = data)
 # compress to BC7
 tex_bc7 = CMP_Texture(width, height, pitch, CMP_Format.BC7)
-CMP_ConvertTexture(tex, tex_bc7)
+tex.convert(tex_bc7)
 
 # decompress back
 tex_re = CMP_Texture(128, 128, pitch, CMP_Format.RGBA_8888)
