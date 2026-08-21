@@ -3,12 +3,17 @@ from __future__ import annotations
 import os
 import sys
 from itertools import chain
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar, Sequence
 
 import nanobind as nb
 from setuptools import Extension, setup
 from setuptools.command.bdist_wheel import bdist_wheel
 from setuptools.command.build_ext import build_ext
+
+if TYPE_CHECKING:
+    from distutils.ccompiler import CCompiler
+
+    _Macro = tuple[str] | tuple[str, str | None]
 
 LOCAL = ""
 CMP_DIR = os.path.join(LOCAL, "compressonator")
@@ -149,6 +154,60 @@ class CompressonatorCoreSIMD(BuildPart):
     include_dirs = [f"{CMP_CORE_DIR}/source"]
 
 
+def wrap_compile(compiler: "CCompiler"):
+    old_compile = compiler.compile
+    std17 = "-std=c++17" if compiler.compiler_type != "msvc" else "/std:c++17"
+
+    def compile_by_language(
+        sources: Sequence[str | os.PathLike[str]],
+        output_dir: str | None = None,
+        macros: list[_Macro] | None = None,
+        include_dirs: list[str] | tuple[str, ...] | None = None,
+        debug: bool = False,
+        extra_preargs: list[str] | None = None,
+        extra_postargs: list[str] | None = None,
+        depends: list[str] | tuple[str, ...] | None = None,
+    ):
+        nonlocal std17
+        c_sources = [s for s in sources if str(s).endswith(".c")]
+        cpp_sources = [s for s in sources if str(s).endswith((".cpp", ".cxx", ".cc"))]
+
+        objects = []
+        # 1. Compile C files (without -std=c++17)
+        if c_sources:
+            objects.extend(
+                old_compile(
+                    c_sources,
+                    output_dir=output_dir,
+                    macros=macros,
+                    include_dirs=include_dirs,
+                    debug=debug,
+                    extra_preargs=extra_preargs,
+                    extra_postargs=extra_postargs,
+                    depends=depends,
+                )
+            )
+
+        # 2. Compile C++ files (with -std=c++17)
+        if cpp_sources:
+            cpp_postargs = list(extra_postargs or []) + [std17]
+            objects.extend(
+                old_compile(
+                    cpp_sources,
+                    output_dir=output_dir,
+                    macros=macros,
+                    include_dirs=include_dirs,
+                    debug=debug,
+                    extra_preargs=extra_preargs,
+                    extra_postargs=cpp_postargs,
+                    depends=depends,
+                )
+            )
+        return objects
+
+    compiler.compile = compile_by_language
+
+
 class CustomBuildExt(build_ext):
     def build_simd_lib(self, ext: Extension) -> None:
         if self.compiler.compiler_type == "msvc":
@@ -187,8 +246,10 @@ class CustomBuildExt(build_ext):
         for src in CompressonatorCoreSIMD.sources:
             ext.sources.remove(src)
 
+        wrap_compile(self.compiler)
+
         if self.compiler.compiler_type == "msvc":
-            ext.extra_compile_args.extend(["/std:c++17", "/w", "-D_WIN32"])
+            ext.extra_compile_args.extend(["/w", "-D_WIN32"])
             ext.extra_link_args.extend(["/INCREMENTAL:NO"])
 
             if self.plat_name.lower().endswith("arm64"):
@@ -207,19 +268,6 @@ class CustomBuildExt(build_ext):
                     # "-DNULL=0",
                 ]
             )
-            ext.extra_link_args.extend([])
-
-            # small hack as modern gcc and clang error if std=c++17 is passed to non C++ code....
-            # and the ati code is C code
-            orig_compile = self.compiler._compile
-
-            def _compile_filter_flags(obj, src, ext, cc_args, postargs, extra_postargs):
-                current_postargs = list(extra_postargs)
-                if src.endswith((".cpp", ".cxx", ".cc")):
-                    current_postargs.append("-std=c++17")
-                return orig_compile(obj, src, ext, cc_args, postargs, current_postargs)
-
-            self.compiler._compile = _compile_filter_flags
 
         if self.plat_name.endswith(("amd64", "x86_64")):
             # build simd lib
