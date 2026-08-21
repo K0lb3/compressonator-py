@@ -1,11 +1,12 @@
-recursive-include compressonator_pyc *.hpp
-recursive-include compressonator/build/sdk *.h
-recursive-include compressonator/cmp_core *.h
-recursive-include compressonator/cmp_compressonatorlib *.h
-recursive-include compressonator/applications/_libs/cmp_math *.h
-recursive-include compressonator/applications/_plugins/common *.h
-recursive-include compressonator/cmp_framework/common *.h
+# fetch all relevant source files
+graft compressonator_pyc
+graft compressonator/cmp_core
+graft compressonator/cmp_compressonatorlib
+graft compressonator/applications/_libs/cmp_math
+graft compressonator/applications/_plugins/common
+graft compressonator/cmp_framework/common
 
+# only include the licenses that we actually need
 include compressonator/license/astc/license.txt
 include compressonator/license/etcpak/license.txt
 include compressonator/license/corelicense.txt
