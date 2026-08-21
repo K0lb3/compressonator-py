@@ -1,4 +1,5 @@
 #include "compressonator.h"
+#include <cstring>
 #include <variant>
 #include <optional>
 #include <sstream>
