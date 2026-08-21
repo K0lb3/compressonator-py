@@ -266,6 +266,13 @@ class CustomBuildExt(build_ext):
                     # Musl fix
                     # "-Dnullptr=0",
                     # "-DNULL=0",
+                    # global define fix
+                    "-include", "locale",
+                    "-include", "vector",
+                    "-include", "math",
+                    "-include", "algorithm",
+                    "-Uglobal",
+                    "-U__global",
                 ]
             )
 
