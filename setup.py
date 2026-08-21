@@ -6,6 +6,7 @@ from itertools import chain
 from typing import TYPE_CHECKING, ClassVar, Sequence
 
 import nanobind as nb
+from packaging.tags import sys_tags
 from setuptools import Extension, setup
 from setuptools.command.bdist_wheel import bdist_wheel
 from setuptools.command.build_ext import build_ext
@@ -283,7 +284,7 @@ class CustomBuildExt(build_ext):
         if sys.platform == "darwin":
             ext.extra_compile_args.append("-mmacosx-version-min=10.15")
 
-        if self.plat_name.startswith("musllinux"):
+        if "musllinux" in next(sys_tags()).platform:
             # musl fix
             ext.extra_compile_args.extend(
                 [
