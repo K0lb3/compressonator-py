@@ -261,9 +261,6 @@ class CustomBuildExt(build_ext):
                     "--no-warnings",
                     "-fPIC",
                     "-Wno-write-strings",
-                    # Musl fix
-                    # "-Dnullptr=0",
-                    # "-DNULL=0",
                 ]
             )
 
@@ -278,11 +275,9 @@ class CustomBuildExt(build_ext):
                 "algorithm",
                 "-Uglobal",
                 "-U__global",
-                # musllinux fix
+                # musl fix
                 "-include",
-                "cstddef",  # Pull in stddef first
-                "-U__null",  # Undefine GCC internal NULL
-                "-DNULL=0",  # Force NULL to numeric 0
+                "compressonator_pyc/fixes/musl_null.hpp",
             ]
 
         if sys.platform == "darwin":
