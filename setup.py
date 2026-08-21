@@ -150,7 +150,7 @@ class CompressonatorCoreSIMD(BuildPart):
 
 
 class CustomBuildExt(build_ext):
-    def build_simd_lib(self, ext: Exception) -> None:
+    def build_simd_lib(self, ext: Extension) -> None:
         if self.compiler.compiler_type == "msvc":
             sse_args = ["/arch:SSE4.1"]
             avx_args = ["/arch:AVX2"]
@@ -269,9 +269,9 @@ setup(
             define_macros=[
                 ("OPTION_BUILD_ASTC", "1"),
                 # ("USE_LOSSLESS_COMPRESSION", "1"), # brotli
-                ("USE_APC", "1"),
-                ("USE_GTC", "1"),
-                ("USE_BASIS", "1"),
+                # ("USE_APC", "1"), # encoder only, decoder is external, Windows only
+                # ("USE_GTC", "1"), # external, R&D, Windows only
+                # ("USE_BASIS", "1"), # external, Windows only
                 # limited api
                 *optional_macros,
             ],
