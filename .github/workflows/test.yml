@@ -18,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-14, windows-11-arm]  # macos-14 uses Apple Silicon (ARM64)
-        python-version: ['3.9']
+        python-version: ['3.12']
 
     steps:
       - uses: actions/checkout@v4
