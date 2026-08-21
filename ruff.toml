@@ -1,0 +1,28 @@
+target-version = "py38"
+include = [
+    "compressonator_py/*.py",
+    "compressonator_py/*.pyi",
+    "tests/*py",
+    "setup.py",
+]
+line-length = 120
+
+[lint]
+select = [
+    # pycodestyle
+    "E",
+    # Pyflakes
+    "F",
+    # flake8-bugbear
+    "B",
+    # isort
+    "I",
+]
+
+[lint.pydocstyle]
+# Enforce numpy-style docstrings
+convention = "numpy"
+
+[lint.per-file-ignores]
+# Ignore docstring requirements for test files
+"tests/**/*.py" = ["D"]
