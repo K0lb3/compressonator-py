@@ -250,7 +250,7 @@ class CustomBuildExt(build_ext):
 
             if self.plat_name.lower().endswith("arm64"):
                 # no __cpuindex on arm64 msvc
-                ext.extra_compile_args.append('/FI"compressonator_pyc/fixes/msvc_arm64.hpp"')
+                ext.extra_compile_args.append('/FIcompressonator_pyc/fixes/msvc_arm64.hpp')
 
             cpp_flags = ["/std:c++17"]
         else:
