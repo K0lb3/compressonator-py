@@ -154,9 +154,8 @@ class CompressonatorCoreSIMD(BuildPart):
     include_dirs = [f"{CMP_CORE_DIR}/source"]
 
 
-def wrap_compile(compiler: "CCompiler"):
+def wrap_compile(compiler: "CCompiler", cpp_flags: list[str]):
     old_compile = compiler.compile
-    std17 = "-std=c++17" if compiler.compiler_type != "msvc" else "/std:c++17"
 
     def compile_by_language(
         sources: Sequence[str | os.PathLike[str]],
@@ -168,7 +167,6 @@ def wrap_compile(compiler: "CCompiler"):
         extra_postargs: list[str] | None = None,
         depends: list[str] | tuple[str, ...] | None = None,
     ):
-        nonlocal std17
         c_sources = [s for s in sources if str(s).endswith(".c")]
         cpp_sources = [s for s in sources if str(s).endswith((".cpp", ".cxx", ".cc"))]
 
@@ -190,7 +188,7 @@ def wrap_compile(compiler: "CCompiler"):
 
         # 2. Compile C++ files (with -std=c++17)
         if cpp_sources:
-            cpp_postargs = list(extra_postargs or []) + [std17]
+            cpp_postargs = (extra_postargs or []) + cpp_flags
             objects.extend(
                 old_compile(
                     cpp_sources,
@@ -246,8 +244,6 @@ class CustomBuildExt(build_ext):
         for src in CompressonatorCoreSIMD.sources:
             ext.sources.remove(src)
 
-        wrap_compile(self.compiler)
-
         if self.compiler.compiler_type == "msvc":
             ext.extra_compile_args.extend(["/w", "-D_WIN32"])
             ext.extra_link_args.extend(["/INCREMENTAL:NO"])
@@ -255,6 +251,8 @@ class CustomBuildExt(build_ext):
             if self.plat_name.lower().endswith("arm64"):
                 # no __cpuindex on arm64 msvc
                 ext.extra_compile_args.append("/DIMPL__cpuidex")
+
+            cpp_flags = ["/std:c++17"]
         else:
             ext.extra_compile_args.extend(
                 [
@@ -266,18 +264,26 @@ class CustomBuildExt(build_ext):
                     # Musl fix
                     # "-Dnullptr=0",
                     # "-DNULL=0",
-                    # global define fix
-                    "-include", "locale",
-                    "-include", "vector",
-                    "-include", "math",
-                    "-include", "algorithm",
-                    "-Uglobal",
-                    "-U__global",
                 ]
             )
 
+            cpp_flags = [
+                "-std=c++17",
+                # global define fix
+                "-include",
+                "locale",
+                "-include",
+                "vector",
+                "-include",
+                "algorithm",
+                "-Uglobal",
+                "-U__global",
+            ]
+
         if sys.platform == "darwin":
             ext.extra_compile_args.append("-mmacosx-version-min=10.15")
+
+        wrap_compile(self.compiler, cpp_flags)
 
         if self.plat_name.endswith(("amd64", "x86_64")):
             # build simd lib
