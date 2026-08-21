@@ -1,4 +1,4 @@
-target-version = "py38"
+target-version = "py39"
 include = [
     "compressonator_py/*.py",
     "compressonator_py/*.pyi",

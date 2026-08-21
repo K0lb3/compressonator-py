@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "compressonator-py"
 description = "compressonator bindings"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [{ name = "Rudolf Kolbe", email = "rkolbe96@gmail.com" }]
 license = { file = "LICENSE" }
 classifiers = [
@@ -14,7 +14,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -35,10 +34,10 @@ version = { attr = "compressonator_py.__version__" }
 
 [project.optional-dependencies]
 tests = ["pytest >= 8.3.3", "pillow"]
-dev = ["nanobind~=2.13", "compressonator-py[tests]", "ruff"]
+dev = ["nanobind~=2.13", "compressonator-py[tests]", "ruff", "setuptools"]
 
 [tool.cibuildwheel]
-build = "cp38-* cp39-* cp310-* cp311-*"
+build = "cp39-* cp310-* cp311-*"
 enable = ["pypy", "pypy-eol"]
 
 [tool.cibuildwheel.linux]
@@ -49,4 +48,3 @@ archs = ["x86_64", "arm64"]
 
 [tool.cibuildwheel.windows]
 archs = ["AMD64", "x86", "ARM64"]
-skip = ["cp38-win_arm64"]
