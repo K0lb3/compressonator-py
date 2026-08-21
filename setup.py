@@ -283,6 +283,15 @@ class CustomBuildExt(build_ext):
         if sys.platform == "darwin":
             ext.extra_compile_args.append("-mmacosx-version-min=10.15")
 
+        if self.plat_name.startswith("musllinux"):
+            # musl fix
+            ext.extra_compile_args.extend(
+                [
+                    "-Dnullptr=0",
+                    "-DNULL=0",
+                ]
+            )
+
         wrap_compile(self.compiler, cpp_flags)
 
         if self.plat_name.endswith(("amd64", "x86_64")):
