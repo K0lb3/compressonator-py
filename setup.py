@@ -67,6 +67,7 @@ class CompressonatorCore(BuildPart):
     ]
 
     include_dirs = [
+        ".",
         f"{CMP_CORE_DIR}/shaders",
         f"{CMP_CORE_DIR}/source",
         f"{CMP_DIR}/applications/_libs/cmp_math",
@@ -250,7 +251,6 @@ class CustomBuildExt(build_ext):
 
             if self.plat_name.lower().endswith("arm64"):
                 # no __cpuindex on arm64 msvc
-                ext.include_dirs.append(".")
                 ext.extra_compile_args.append('/FIcompressonator_pyc\\fixes\\msvc_arm64.hpp')
 
             cpp_flags = ["/std:c++17"]
