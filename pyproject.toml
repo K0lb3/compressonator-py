@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "nanobind ~= 2.13", "packaging"]
+requires = ["setuptools", "nanobind ~= 2.13"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -34,7 +34,7 @@ version = { attr = "compressonator_py.__version__" }
 
 [project.optional-dependencies]
 tests = ["pytest >= 8.3.3", "pillow"]
-dev = ["nanobind~=2.13", "compressonator-py[tests]", "ruff", "setuptools", "packaging"]
+dev = ["nanobind~=2.13", "compressonator-py[tests]", "ruff", "setuptools"]
 
 [tool.cibuildwheel]
 build = "cp39-* cp310-* cp311-* cp312-*"

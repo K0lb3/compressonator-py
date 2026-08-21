@@ -6,7 +6,6 @@ from itertools import chain
 from typing import TYPE_CHECKING, ClassVar, Sequence
 
 import nanobind as nb
-from packaging.tags import sys_tags
 from setuptools import Extension, setup
 from setuptools.command.bdist_wheel import bdist_wheel
 from setuptools.command.build_ext import build_ext
@@ -279,19 +278,15 @@ class CustomBuildExt(build_ext):
                 "algorithm",
                 "-Uglobal",
                 "-U__global",
+                # musllinux fix
+                "-include",
+                "cstddef",  # Pull in stddef first
+                "-U__null",  # Undefine GCC internal NULL
+                "-DNULL=0",  # Force NULL to numeric 0
             ]
 
         if sys.platform == "darwin":
             ext.extra_compile_args.append("-mmacosx-version-min=10.15")
-
-        if "musllinux" in next(sys_tags()).platform:
-            # musl fix
-            ext.extra_compile_args.extend(
-                [
-                    "-Dnullptr=0",
-                    "-DNULL=0",
-                ]
-            )
 
         wrap_compile(self.compiler, cpp_flags)
 
