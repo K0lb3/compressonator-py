@@ -240,7 +240,7 @@ class CustomBuildExt(build_ext):
                 )
             )
 
-    def build_extension(self, ext) -> None:
+    def build_extension(self, ext: Extension) -> None:
         # remove simd sources, we will build them conditionally below
         # only added directly so they get included in sdist
         for src in CompressonatorCoreSIMD.sources:
@@ -268,6 +268,9 @@ class CustomBuildExt(build_ext):
                     # "-DNULL=0",
                 ]
             )
+
+        if sys.platform == "darwin":
+            ext.extra_compile_args.append("-mmacosx-version-min=10.15")
 
         if self.plat_name.endswith(("amd64", "x86_64")):
             # build simd lib
