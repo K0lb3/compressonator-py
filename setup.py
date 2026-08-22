@@ -9,6 +9,7 @@ import nanobind as nb
 from setuptools import Extension, setup
 from setuptools.command.bdist_wheel import bdist_wheel
 from setuptools.command.build_ext import build_ext
+from setuptools.command.sdist import sdist
 
 if TYPE_CHECKING:
     from distutils.ccompiler import CCompiler
@@ -67,7 +68,6 @@ class CompressonatorCore(BuildPart):
     ]
 
     include_dirs = [
-        ".",
         f"{CMP_CORE_DIR}/shaders",
         f"{CMP_CORE_DIR}/source",
         f"{CMP_DIR}/applications/_libs/cmp_math",
@@ -251,7 +251,7 @@ class CustomBuildExt(build_ext):
 
             if self.plat_name.lower().endswith("arm64"):
                 # no __cpuindex on arm64 msvc
-                ext.extra_compile_args.append('/FIcompressonator_pyc\\fixes\\msvc_arm64.hpp')
+                ext.extra_compile_args.append("/FIcompressonator_pyc\\fixes\\msvc_arm64.hpp")
 
             cpp_flags = ["/std:c++17"]
         else:
@@ -306,6 +306,33 @@ class bdist_wheel_abi3(bdist_wheel):
         return python, abi, plat
 
 
+class CustomSdist(sdist):
+    def make_distribution(self):
+        # Explicitly append submodules/headers to the file list before packaging
+        extra_dirs = [
+            "compressonator_pyc",
+            "compressonator/cmp_core",
+            "compressonator/cmp_compressonatorlib",
+            "compressonator/applications/_libs/cmp_math",
+            "compressonator/applications/_plugins/common",
+            "compressonator/cmp_framework/common",
+        ]
+        for d in extra_dirs:
+            for root, _, files in os.walk(d):
+                for f in files:
+                    if f.endswith((".c", ".cpp", ".h", ".hpp")):
+                        self.filelist.append(os.path.join(root, f))
+        self.filelist.extend(
+            [
+                "compressonator/license/astc/license.txt",
+                "compressonator/license/etcpak/license.txt",
+                "compressonator/license/corelicense.txt",
+                "compressonator/license/license.txt",
+            ]
+        )
+        super().make_distribution()
+
+
 optional_macros = []
 if USE_LIMITED_API:
     optional_macros.append(("Py_LIMITED_API", "0x030C0000"))
@@ -343,5 +370,5 @@ setup(
             py_limited_api=USE_LIMITED_API,
         )
     ],
-    cmdclass={"build_ext": CustomBuildExt, "bdist_wheel": bdist_wheel_abi3},
+    cmdclass={"build_ext": CustomBuildExt, "bdist_wheel": bdist_wheel_abi3, "sdist": CustomSdist},
 )
