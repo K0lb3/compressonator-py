@@ -68,6 +68,7 @@ class CompressonatorCore(BuildPart):
     ]
 
     include_dirs = [
+        ".", # for fixes
         f"{CMP_CORE_DIR}/shaders",
         f"{CMP_CORE_DIR}/source",
         f"{CMP_DIR}/applications/_libs/cmp_math",
