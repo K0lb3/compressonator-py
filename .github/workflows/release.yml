@@ -35,7 +35,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [windows-latest, macos-13, macos-14]
+        os: [windows-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -66,7 +66,7 @@ jobs:
       - name: Build wheels
         uses: joerick/cibuildwheel@v3.3
         env:
-          CIBW_SKIP: "*aarch64 *ppc64le *s390x *armv7l *-musllinux*"
+          CIBW_SKIP: "*aarch64 *armv7l *-musllinux*"
           CIBW_TEST_SKIP: "*"
 
       - uses: actions/upload-artifact@v4
